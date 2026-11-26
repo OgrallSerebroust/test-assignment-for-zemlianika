@@ -4,3 +4,11 @@ services:
       - "8000:8000"
     volumes:
       - ./services/backend:/app
+  frontend:
+    build:
+      target: development
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./services/frontend/src:/app/src
+      - ./services/frontend/index.html:/app/index.html

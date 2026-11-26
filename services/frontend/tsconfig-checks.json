@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "strict": true, // Can be for set true to all of STRICT checks,
+     // but atomic set of checks is better way.
+    // "allowUnreachableCode": false, Linter check - true if it real necessary. (no-unreachable)
+    // "allowUnusedLabels": false, Linter check - true if it real necessary. (no-unused-labels)
+    "alwaysStrict": true, // Strict check
+    // "noFallthroughCasesInSwitch": false, Linter check - true if not using ESLint rule no-fallthrough
+    "noImplicitAny": true, // Strict check
+    "noImplicitReturns": true, // Linter check
+    "noImplicitThis": true, // Strict check
+    // "noImplicitUseStrict": false, Base check - true if it real necessary
+    "noPropertyAccessFromIndexSignature": true, // Strict check
+    // "noStrictGenericChecks": false, Base check - true if it real necessary
+    // "noUncheckedIndexedAccess": false, Simplicity for secutity // Strict check
+    // "noUnusedLocals": false, Linter check - true if not using ESLint rule no-unused-vars
+    // "noUnusedParameters": false, Linter check - true if not using ESLint no-unused-vars
+    "strictBindCallApply": true, // Strict check
+    "strictFunctionTypes": true, // Strict check
+    "strictNullChecks": true, // Strict check
+    "strictPropertyInitialization": true, // Strict check
+    // "suppressExcessPropertyErrors": false, Base check - true if it real necessary
+    // "suppressImplicitAnyIndexErrors": false, Base check - true if it real necessary
+  },
+}
