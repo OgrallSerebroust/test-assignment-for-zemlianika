@@ -1,0 +1,10 @@
+name: "Zemlianika"
+services:
+  backend:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    container_name: zemlianika_backend
+    expose:
+      - "8000"
+    init: true
