@@ -1,0 +1,4 @@
+services/backend/Dockerfile eol=lf
+services/backend/pyproject.toml eol=lf
+services/backend/uv.lock eol=lf
+*.sh eol=lf

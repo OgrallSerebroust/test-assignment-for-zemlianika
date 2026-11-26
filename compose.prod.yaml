@@ -1,0 +1,7 @@
+services:
+  backend:
+    command: ["dev"]
+    image: zemlianika-backend:${APP_VERSION:-latest}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
