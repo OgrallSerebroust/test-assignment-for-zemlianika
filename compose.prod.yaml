@@ -5,3 +5,10 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+  frontend:
+    build:
+      target: application
+    image: zemlianika-frontend:${APP_VERSION:-latest}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
