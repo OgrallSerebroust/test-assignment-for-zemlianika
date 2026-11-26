@@ -1,4 +1,9 @@
 services:
+  db:
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-zemlianika}
+      POSTGRES_USER: ${POSTGRES_USER:-zemlianika}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zemlianika}
   backend:
     ports:
       - "8000:8000"

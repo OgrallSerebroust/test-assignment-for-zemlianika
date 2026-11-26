@@ -1,10 +1,24 @@
 name: "Zemlianika"
 services:
+  db:
+    container_name: zemlianika_db
+    image: postgres:19
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
   backend:
     build:
       context: ./services/backend
       dockerfile: Dockerfile
     container_name: zemlianika_backend
+    depends_on:
+      db:
+        condition: service_healthy
     expose:
       - "8000"
     init: true
@@ -14,3 +28,5 @@ services:
       dockerfile: Dockerfile
     container_name: zemlianika_frontend
     init: true
+volumes:
+  postgres_data:
