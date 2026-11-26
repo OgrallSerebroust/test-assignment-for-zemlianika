@@ -1,0 +1,10 @@
+.menu
+{
+    display: flex;
+    justify-content: center;
+}
+
+.menu > :nth-child(n)
+{
+    margin: 0 1vh;
+}
