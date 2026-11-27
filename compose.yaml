@@ -1,4 +1,8 @@
 name: "Zemlianika"
+x-backend-build: &backend_build
+  context: ./services/backend
+  dockerfile: Dockerfile
+
 services:
   db:
     container_name: zemlianika_db
@@ -11,14 +15,20 @@ services:
       timeout: 3s
       retries: 10
       start_period: 10s
-  backend:
-    build:
-      context: ./services/backend
-      dockerfile: Dockerfile
-    container_name: zemlianika_backend
+  migrate:
+    build: *backend_build
+    command: ["migrate"]
+    container_name: zemlianika_migrate
+    restart: "no"
     depends_on:
       db:
         condition: service_healthy
+  backend:
+    build: *backend_build
+    container_name: zemlianika_backend
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
     expose:
       - "8000"
     init: true

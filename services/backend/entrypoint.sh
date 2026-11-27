@@ -29,7 +29,6 @@ elif [ $1 = "run" ]
     exit $?
 elif [ $1 = "dev" ]
   then
-    # python manage.py migrate
     exec python manage.py runserver 0.0.0.0:8000
     exit $?
 elif [ $1 = "celery" ]
