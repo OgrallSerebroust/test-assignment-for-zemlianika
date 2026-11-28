@@ -1,0 +1,7 @@
+services/backend/Dockerfile eol=lf
+services/backend/pyproject.toml eol=lf
+services/backend/uv.lock eol=lf
+services/frontend/.dockerignore eol=lf
+services/frontend/Dockerfile eol=lf
+services/frontend/nginx.conf eol=lf
+*.sh eol=lf

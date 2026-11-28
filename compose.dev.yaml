@@ -1,0 +1,31 @@
+services:
+  db:
+    environment: &postgres_environment
+      POSTGRES_DB: ${POSTGRES_DB:-zemlianika}
+      POSTGRES_USER: ${POSTGRES_USER:-zemlianika}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zemlianika}
+  backend:
+    environment: &django_environment
+      <<: *postgres_environment
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+    ports:
+      - "8000:8000"
+    volumes: &django_volumes
+      - ./services/backend:/app
+  migrate:
+    environment: *django_environment
+    volumes: *django_volumes
+  worker:
+    environment: *django_environment
+    volumes: *django_volumes
+  frontend:
+    build:
+      target: development
+    environment:
+      API_PROXY_TARGET: http://backend:8000
+    ports: !override
+      - "5173:5173"
+    volumes:
+      - ./services/frontend/src:/app/src
+      - ./services/frontend/index.html:/app/index.html

@@ -1,0 +1,40 @@
+services:
+  db:
+    environment: &postgres_environment
+      POSTGRES_DB: ${POSTGRES_DB:-zemlianika}
+      POSTGRES_USER: ${POSTGRES_USER:-zemlianika}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD for production}
+    restart: unless-stopped
+  backend:
+    command: ["dev"]
+    env_file: !override
+      - ./services/backend/.env.prod
+    environment: &django_environment
+      <<: *postgres_environment
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      DJANGO_SETTINGS_MODULE: server.settings.environments.prod
+    image: &django_image zemlianika-backend:${APP_VERSION:-latest}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+  migrate:
+    env_file: !override
+      - ./services/backend/.env.prod
+    environment: *django_environment
+    image: *django_image
+  worker:
+    env_file: !override
+      - ./services/backend/.env.prod
+    environment: *django_environment
+    image: *django_image
+    restart: unless-stopped
+  redis:
+    restart: unless-stopped
+  frontend:
+    build:
+      target: application
+    image: zemlianika-frontend:${APP_VERSION:-latest}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
