@@ -11,6 +11,9 @@ export default function Menu() {
         }
       }, {
         label: "Создать обращение",
+        linkOptions: {
+          to: "/appeals/new",
+        },
       },].map(({ label, linkOptions, }) => (
         <NavItem key={label} label={label} linkOptions={linkOptions} />
       ))}

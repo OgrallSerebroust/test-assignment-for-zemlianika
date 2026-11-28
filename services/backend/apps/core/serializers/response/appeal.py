@@ -19,3 +19,9 @@ class AppealResponseSerializer(serializers.ModelSerializer):
 
 class AppealStatusErrorSerializer(serializers.Serializer):
     status = serializers.ListField(child=serializers.CharField())
+
+
+class AppealCreateErrorSerializer(serializers.Serializer):
+    full_name = serializers.ListField(child=serializers.CharField(), required=False)
+    appeal = serializers.ListField(child=serializers.CharField(), required=False)
+    non_field_errors = serializers.ListField(child=serializers.CharField(), required=False)

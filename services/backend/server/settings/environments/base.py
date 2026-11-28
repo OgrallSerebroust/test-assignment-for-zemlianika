@@ -36,6 +36,10 @@ class EnvSettings(BaseSettings):
         validation_alias="POSTGRES_PORT",
     )
     secret_key: SecretStr
+    celery_broker_url: str = Field(
+        default="redis://localhost:6379/0",
+        validation_alias="CELERY_BROKER_URL",
+    )
 
 
 def build_databases(env: EnvSettings) -> dict[str, dict[str, str | int]]:
@@ -114,6 +118,8 @@ SPECTACULAR_SETTINGS = {
 }
 
 STATIC_URL = "static/"
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_IGNORE_RESULT = True
 MAILERS = {
     "default": {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",

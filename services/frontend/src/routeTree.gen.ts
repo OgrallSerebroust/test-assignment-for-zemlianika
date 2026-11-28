@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from "./app/routes/__root"
 import { Route as IndexRouteImport } from "./app/routes/index"
 import { Route as AppealsAppealIdRouteImport } from "./app/routes/appeals.$appealId"
+import { Route as AppealsNewRouteImport } from "./app/routes/appeals.new"
 
 const IndexRoute = IndexRouteImport.update({
   id: "/",
@@ -22,31 +23,40 @@ const AppealsAppealIdRoute = AppealsAppealIdRouteImport.update({
   path: "/appeals/$appealId",
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppealsNewRoute = AppealsNewRouteImport.update({
+  id: "/appeals/new",
+  path: "/appeals/new",
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/appeals/$appealId": typeof AppealsAppealIdRoute
+  "/appeals/new": typeof AppealsNewRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/appeals/$appealId": typeof AppealsAppealIdRoute
+  "/appeals/new": typeof AppealsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
   "/appeals/$appealId": typeof AppealsAppealIdRoute
+  "/appeals/new": typeof AppealsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/appeals/$appealId"
+  fullPaths: "/" | "/appeals/$appealId" | "/appeals/new"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/appeals/$appealId"
-  id: "__root__" | "/" | "/appeals/$appealId"
+  to: "/" | "/appeals/$appealId" | "/appeals/new"
+  id: "__root__" | "/" | "/appeals/$appealId" | "/appeals/new"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppealsAppealIdRoute: typeof AppealsAppealIdRoute
+  AppealsNewRoute: typeof AppealsNewRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -65,12 +75,20 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AppealsAppealIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/appeals/new": {
+      id: "/appeals/new"
+      path: "/appeals/new"
+      fullPath: "/appeals/new"
+      preLoaderRoute: typeof AppealsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppealsAppealIdRoute: AppealsAppealIdRoute,
+  AppealsNewRoute: AppealsNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

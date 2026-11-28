@@ -1,6 +1,9 @@
 import type { AppealListParams } from "./appeal.types";
 
+const lists = ["appeals", "list"] as const;
+
 export const appealQueryKeys = {
-  list: (params: AppealListParams) => ["appeals", "list", params] as const,
+  lists,
+  list: (params: AppealListParams) => [...lists, params] as const,
   detail: (id: string) => ["appeals", "detail", id] as const,
 }
