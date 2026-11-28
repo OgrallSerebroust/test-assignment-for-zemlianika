@@ -12,7 +12,7 @@ x-backend-environment: &backend_environment
   DJANGO_SETTINGS_MODULE: server.settings.environments.dev
 x-backend-service: &backend_service
   build: *backend_build
-  env_file: ./services/backend/.env.example
+  env_file: ./services/backend/.env
   environment: *backend_environment
 
 services:
