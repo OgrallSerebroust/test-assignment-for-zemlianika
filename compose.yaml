@@ -2,11 +2,27 @@ name: "Zemlianika"
 x-backend-build: &backend_build
   context: ./services/backend
   dockerfile: Dockerfile
+x-backend-environment: &backend_environment
+  POSTGRES_DB: ${POSTGRES_DB:-zemlianika}
+  POSTGRES_USER: ${POSTGRES_USER:-zemlianika}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zemlianika}
+  POSTGRES_HOST: db
+  POSTGRES_PORT: "5432"
+  CELERY_BROKER_URL: redis://redis:6379/0
+  DJANGO_SETTINGS_MODULE: server.settings.environments.dev
+x-backend-service: &backend_service
+  build: *backend_build
+  env_file: ./services/backend/.env.example
+  environment: *backend_environment
 
 services:
   db:
     container_name: zemlianika_db
     image: postgres:19
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-zemlianika}
+      POSTGRES_USER: ${POSTGRES_USER:-zemlianika}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zemlianika}
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
@@ -15,8 +31,19 @@ services:
       timeout: 3s
       retries: 10
       start_period: 10s
+  redis:
+    container_name: zemlianika_redis
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
   migrate:
-    build: *backend_build
+    <<: *backend_service
     command: ["migrate"]
     container_name: zemlianika_migrate
     restart: "no"
@@ -24,19 +51,36 @@ services:
       db:
         condition: service_healthy
   backend:
-    build: *backend_build
+    <<: *backend_service
     container_name: zemlianika_backend
     depends_on:
       migrate:
         condition: service_completed_successfully
+      redis:
+        condition: service_healthy
     expose:
       - "8000"
+    init: true
+  worker:
+    <<: *backend_service
+    command: ["celery", "worker", "--loglevel=INFO", "--concurrency=2"]
+    container_name: zemlianika_celery
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
     init: true
   frontend:
     build:
       context: ./services/frontend
       dockerfile: Dockerfile
     container_name: zemlianika_frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"
     init: true
 volumes:
   postgres_data:
+  redis_data:

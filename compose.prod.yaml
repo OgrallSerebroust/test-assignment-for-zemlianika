@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
   backend:
     command: ["dev"]
-    env_file: &django_env_files
+    env_file: !override
       - ./services/backend/.env.prod
     environment: &django_environment
       <<: *postgres_environment
@@ -19,9 +19,18 @@ services:
       - "8000:8000"
     restart: unless-stopped
   migrate:
-    env_file: *django_env_files
+    env_file: !override
+      - ./services/backend/.env.prod
     environment: *django_environment
     image: *django_image
+  worker:
+    env_file: !override
+      - ./services/backend/.env.prod
+    environment: *django_environment
+    image: *django_image
+    restart: unless-stopped
+  redis:
+    restart: unless-stopped
   frontend:
     build:
       target: application

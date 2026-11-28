@@ -16,12 +16,15 @@ services:
   migrate:
     environment: *django_environment
     volumes: *django_volumes
+  worker:
+    environment: *django_environment
+    volumes: *django_volumes
   frontend:
     build:
       target: development
     environment:
       API_PROXY_TARGET: http://backend:8000
-    ports:
+    ports: !override
       - "5173:5173"
     volumes:
       - ./services/frontend/src:/app/src

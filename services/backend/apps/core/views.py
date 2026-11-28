@@ -1,3 +1,7 @@
+import logging
+from functools import partial
+
+from django.db import transaction
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -14,6 +18,16 @@ from .serializers.response.appeal import (
     AppealResponseSerializer,
     AppealStatusErrorSerializer,
 )
+from .tasks import process_appeal
+
+logger = logging.getLogger(__name__)
+
+
+def enqueue_appeal(appeal_id: int):
+    try:
+        process_appeal.delay(appeal_id)
+    except Exception:
+        logger.exception("Could not enqueue appeal %s", appeal_id)
 
 
 class InvalidAppealStatus(ValidationError):
@@ -55,6 +69,11 @@ class AppealViewSet(CreateModelMixin, ReadOnlyModelViewSet):
         self.perform_create(serializer)
         response = AppealResponseSerializer(serializer.instance, context=self.get_serializer_context())
         return Response(response.data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        appeal = serializer.instance
+        transaction.on_commit(partial(enqueue_appeal, appeal.pk))
 
     def get_queryset(self):
         if self.action != "list":
